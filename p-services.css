@@ -1,0 +1,21 @@
+/* =====================================================
+   services.html 専用 (style.css の後に読み込む)
+   共通部品はそのまま使い、このページだけの調整を足す。
+===================================================== */
+
+/* 見出し h2 は clamp(2.4rem, 4.6vw, 3.6rem) を下回らせない */
+.block__intro .block__title { font-size: clamp(2.4rem, 4.6vw, 3.6rem); }
+
+/* 本文は 16px 以上 (共通の step__body は 15px、row__tech は 15px) */
+.step__body { font-size: 16px; text-wrap: balance; }
+.row__tech { font-size: 16px; }
+
+/* 4列の steps は幅が狭くなるので、余白を少し絞る */
+@media (min-width: 961px) and (max-width: 1180px) {
+    .step { padding-left: 20px; padding-right: 20px; }
+}
+
+/* 連番は 3.6rem を下回らせない (共通は ≤960 で 3.2rem 始まり) */
+@media (max-width: 960px) {
+    .step__num { font-size: clamp(3.6rem, 9vw, 4.4rem); }
+}

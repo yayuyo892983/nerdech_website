@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-H37PYR7S1G"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-H37PYR7S1G');
+    </script>
+    <script>document.documentElement.classList.add('js');</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="合同会社 nerdech へのお問い合わせ。Company Brain のデモ、導入のご相談、開発のご相談を受け付けています。">
+    <meta name="robots" content="noindex, follow">
+    <meta name="theme-color" content="#0a0a0a">
+    <link rel="canonical" href="https://nerdech.co.jp/contact.html">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <meta property="og:type"        content="website">
+    <meta property="og:url"         content="https://nerdech.co.jp/contact.html">
+    <meta property="og:title"       content="お問い合わせ | 合同会社 nerdech">
+    <meta property="og:description" content="合同会社 nerdech へのお問い合わせ。Company Brain のデモ、導入のご相談、開発のご相談を受け付けています。">
+    <meta property="og:image"       content="https://nerdech.co.jp/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale"      content="ja_JP">
+    <meta property="og:site_name"   content="合同会社 nerdech">
+    <meta name="twitter:card"        content="summary_large_image">
+    <meta name="twitter:title"       content="お問い合わせ | 合同会社 nerdech">
+    <meta name="twitter:description" content="合同会社 nerdech へのお問い合わせ。Company Brain のデモ、導入のご相談、開発のご相談を受け付けています。">
+    <meta name="twitter:image"       content="https://nerdech.co.jp/og-image.png">
+    <title>お問い合わせ | 合同会社 nerdech</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@300;400;500&family=Noto+Serif+JP:wght@500;600&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=20260925">
+</head>
+<body class="contact-page">
+    <header class="header">
+        <a href="index.html" class="header__logo" aria-label="nerdech — トップへ">
+            <span class="logo" aria-hidden="true">n</span>
+            <span class="brand">nerdech</span>
+        </a>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="メニューを開く">
+            <span class="nav-toggle__bar" aria-hidden="true"></span>
+            <span class="nav-toggle__bar" aria-hidden="true"></span>
+        </button>
+        <nav class="header-nav" id="site-nav" aria-label="メインナビゲーション">
+            <a class="header-nav__btn" href="vision.html">vision</a>
+            <a class="header-nav__btn" href="company-brain.html">company brain</a>
+            <a class="header-nav__btn" href="services.html">services</a>
+            <a class="header-nav__btn" href="works.html">works</a>
+            <a class="header-nav__btn" href="company.html">company</a>
+            <a class="header-nav__btn" href="news.html">news</a>
+            <a class="header-nav__btn active" href="contact.html" aria-current="page">contact</a>
+        </nav>
+    </header>
+
+    <main class="contact-split">
+
+        <!-- ── 左パネル ── -->
+        <aside class="contact-split__left">
+            <div class="cs-top">
+                <a href="index.html" class="cs-back">← nerdech</a>
+            </div>
+
+            <div class="cs-main">
+                <h1 class="cs-label">contact</h1>
+                <p class="cs-statement"><span>デモのご依頼、</span><span>導入のご相談、</span><span>開発のご相談。</span></p>
+            </div>
+
+            <div class="cs-bottom">
+                <address class="cs-address">
+                    <a class="cs-address__line" href="mailto:info@nerdech.co.jp">info@nerdech.co.jp</a>
+                    <span class="cs-address__line">東京都渋谷区道玄坂一丁目10番8号<br>渋谷道玄坂東急ビル2F-C</span>
+                </address>
+                <small class="cs-copy">&copy; 2026 nerdech.</small>
+            </div>
+        </aside>
+
+        <!-- ── 右パネル ── -->
+        <div class="contact-split__right">
+            <div class="cs-right__inner">
+
+                <h2 class="cs-right__header">お問い合わせフォーム</h2>
+
+                <div id="form-sent" class="form-notice" role="status" hidden>
+                    <p>お問い合わせありがとうございます。2〜3営業日以内にご連絡いたします。</p>
+                </div>
+                <div id="form-error" class="form-notice form-notice--error" role="alert" hidden>
+                    <p>送信に失敗しました。入力内容をご確認ください。</p>
+                </div>
+
+                <form id="contact-form" class="contact-form" action="contact_handler.php" method="post">
+                    <div class="contact-form__row">
+                        <label class="contact-form__label" for="contact-name">お名前</label>
+                        <input class="contact-form__input" id="contact-name" type="text" name="name" autocomplete="name" required>
+                    </div>
+                    <div class="contact-form__row">
+                        <label class="contact-form__label" for="contact-email">メールアドレス</label>
+                        <input class="contact-form__input" id="contact-email" type="email" name="email" autocomplete="email" required>
+                    </div>
+                    <div class="contact-form__row">
+                        <label class="contact-form__label" for="contact-topic">ご用件</label>
+                        <select class="contact-form__input contact-form__select" id="contact-topic">
+                            <option value="Company Brain のデモ">Company Brain のデモ</option>
+                            <option value="導入のご相談">導入のご相談</option>
+                            <option value="開発のご相談">開発のご相談</option>
+                            <option value="その他">その他</option>
+                        </select>
+                    </div>
+                    <div class="contact-form__row">
+                        <label class="contact-form__label" for="contact-message">お問い合わせ内容</label>
+                        <textarea class="contact-form__input contact-form__textarea" id="contact-message" name="message" rows="6" required></textarea>
+                    </div>
+                    <div class="contact-form__footer">
+                        <button class="contact-form__submit" type="submit">送信する →</button>
+                    </div>
+                </form>
+
+                <div class="cs-right__note">
+                    <p>個人情報の取り扱いについては <a href="privacy.html">プライバシーポリシー</a> をご確認ください。</p>
+                    <p>通常 2〜3 営業日以内にご返信いたします。</p>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        <div class="footer__inner">
+            <div class="footer__brand">
+                <a class="footer__brand-link" href="index.html" aria-label="nerdech — トップへ">
+                    <span class="footer__logo" aria-hidden="true">n</span>
+                    <span class="footer__name">nerdech</span>
+                </a>
+            </div>
+            <address class="footer__contact">
+                <div class="footer__block">
+                    <span class="footer__label">メール</span>
+                    <a href="mailto:info@nerdech.co.jp" class="footer__value">info@nerdech.co.jp</a>
+                </div>
+                <div class="footer__block">
+                    <span class="footer__label">所在地</span>
+                    <span class="footer__value">東京都渋谷区道玄坂一丁目10番8号<br>渋谷道玄坂東急ビル2F-C</span>
+                </div>
+            </address>
+            <nav class="footer__sitemap" aria-label="サイトマップ">
+                <span class="footer__label">サイトマップ</span>
+                <ul class="footer__sitemap-list">
+                    <li><a class="footer__sitemap-link" href="index.html">top</a></li>
+                    <li><a class="footer__sitemap-link" href="vision.html">vision</a></li>
+                    <li><a class="footer__sitemap-link" href="company-brain.html">company brain</a></li>
+                    <li><a class="footer__sitemap-link" href="services.html">services</a></li>
+                    <li><a class="footer__sitemap-link" href="works.html">works</a></li>
+                    <li><a class="footer__sitemap-link" href="company.html">company</a></li>
+                    <li><a class="footer__sitemap-link" href="message.html">message</a></li>
+                    <li><a class="footer__sitemap-link" href="news.html">news</a></li>
+                    <li><a class="footer__sitemap-link" href="contact.html" aria-current="page">contact</a></li>
+                </ul>
+            </nav>
+        </div>
+        <div class="footer__bottom">
+            <small>&copy; 2026 nerdech. All rights reserved.</small>
+            <a class="footer__legal" href="privacy.html">プライバシーポリシー</a>
+        </div>
+    </footer>
+
+    <script src="site.js?v=20260925"></script>
+</body>
+</html>

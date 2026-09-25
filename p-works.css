@@ -1,0 +1,7 @@
+/* works.html 専用。共通部品(style.css)は触らず、このページだけの調整を置く。 */
+
+/* 導入の一文と特集カードの間 */
+.works-lead + .work-feature { margin-top: clamp(40px, 5vw, 64px); }
+
+/* 特集は block の最後の要素。block の下余白と二重にならないようにする */
+.block > .work-feature:last-child { margin-bottom: 0; }

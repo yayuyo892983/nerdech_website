@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /admin.php
+Disallow: /contact.html
+Disallow: /data/
+Disallow: /.env
+Disallow: /env_loader.php
+Disallow: /contact_handler.php
+
+Sitemap: https://nerdech.co.jp/sitemap.xml

@@ -1,0 +1,2443 @@
+/* =====================================================
+   nerdech — style.css
+   目次
+     1  ROOT / BASE
+     2  HEADER / NAV / HAMBURGER
+     3  REVEAL (スクロールアニメ)
+     4  BUTTON / LINK
+     5  TOP の各セクション (.section 系)
+     6  第2段階用コンポーネント (page-hero / block / rows / bignum / steps /
+        feature / frame / pullquote / quote-list / timeline / subnav / prose /
+        lead / cta-band / company-list / card / work-feature / tags)
+     7  NEWS
+     8  FOOTER
+     9  CONTACT PAGE
+    10  EFFECTS (粒子canvas / 光暈 / 走査線)
+    11  REDUCED MOTION
+    12  RESPONSIVE (960 / 900 / 600)
+===================================================== */
+
+
+/* =====================
+   1. ROOT / BASE
+===================== */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --black:        #0a0a0a;
+    --white:        #f5f5f0;
+    --gray-1:       #1a1a1a;
+    --gray-2:       #2e2e2e;
+    --gray-3:       #8a8a8a;
+    --gray-4:       #c8c8c8;
+    --gray-5:       #62625d;
+    --off-white:    #ededea;
+
+    /* 英字は DM、日本語はフォールバックで Noto (upright) */
+    --font-display: 'DM Serif Display', 'Noto Serif JP', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+    --font-mono:    'DM Mono', 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', monospace;
+    --font-jp-serif: 'Noto Serif JP', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+    --font-jp-sans:  'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+
+    /* 左右の余白。最大幅 1240px に収まるよう自動で広がる。
+       padding-inline / margin-inline / left / right にそのまま使う。 */
+    --gutter: max(60px, calc((100% - 1240px) / 2));
+
+    /* 色の役割は面(tone)ごとに切り替える。既定は暗い面。 */
+    --bg:        var(--black);
+    --fg:        var(--white);
+    --fg-mute:   var(--gray-4);
+    --fg-dim:    var(--gray-3);
+    --line:      rgba(245, 245, 240, 0.14);
+    --line-strong: rgba(245, 245, 240, 0.34);
+}
+
+html {
+    scroll-behavior: smooth;
+    overflow-x: clip;
+    -webkit-text-size-adjust: 100%;
+}
+
+html.nav-open { overflow: hidden; }
+
+body {
+    font-family: var(--font-jp-sans);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.9;
+    background-color: var(--black);
+    color: var(--white);
+    overflow-x: clip;
+    font-synthesis: none;
+    line-break: strict;
+    word-break: auto-phrase;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ノイズテクスチャ (ごく薄い質感) */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0.06;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n' x='0' y='0' width='100%25' height='100%25'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    background-size: 220px 220px;
+}
+
+h1, h2, h3, h4, h5, h6 { font-weight: 400; }
+b, strong { font-weight: 500; }
+a { color: inherit; }
+img { display: block; max-width: 100%; height: auto; }
+ul, ol { list-style: none; }
+[hidden] { display: none !important; }
+address { font-style: normal; }
+small { font-size: inherit; }
+[id] { scroll-margin-top: 0; }
+
+:focus-visible {
+    outline: 2px solid var(--fg);
+    outline-offset: 3px;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+}
+
+/* 大きな日本語見出しを文節で折り返すための箱。<span class="ph">会社の知識を、</span> */
+.ph { display: inline-block; }
+
+/* ---- 面(tone)。section / block / page-hero / cta-band に付ける ---- */
+.section--dark,
+.block--dark,
+.page-hero,
+.cta-band,
+.footer {
+    --bg: var(--black);
+    --fg: var(--white);
+    --fg-mute: var(--gray-4);
+    --fg-dim: var(--gray-3);
+    --line: rgba(245, 245, 240, 0.14);
+    --line-strong: rgba(245, 245, 240, 0.34);
+    background-color: var(--bg);
+    color: var(--fg);
+}
+
+.section--gray,
+.block--gray {
+    --bg: var(--gray-1);
+    --fg: var(--white);
+    --fg-mute: var(--gray-4);
+    --fg-dim: var(--gray-3);
+    --line: rgba(245, 245, 240, 0.14);
+    --line-strong: rgba(245, 245, 240, 0.34);
+    background-color: var(--bg);
+    color: var(--fg);
+}
+
+.section--light,
+.block--light {
+    --bg: var(--off-white);
+    --fg: var(--black);
+    --fg-mute: #3e3e3a;
+    --fg-dim: var(--gray-5);
+    --line: rgba(10, 10, 10, 0.14);
+    --line-strong: rgba(10, 10, 10, 0.36);
+    background-color: var(--bg);
+    color: var(--fg);
+}
+
+
+/* =====================
+   2. HEADER / NAV / HAMBURGER
+   全ページ共通。index.html の <header> をそのままコピーする。
+===================== */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 28px 44px 0 40px;
+    pointer-events: none;
+    mix-blend-mode: difference;
+}
+
+.header__logo {
+    pointer-events: all;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.logo {
+    font-family: var(--font-display);
+    font-size: 42px;
+    line-height: 1;
+    color: var(--white);
+    letter-spacing: -2px;
+}
+
+.brand {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 300;
+    letter-spacing: 0.18em;
+    line-height: 1.4;
+    color: var(--gray-4);
+}
+
+.header-nav {
+    pointer-events: all;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+    padding-top: 4px;
+}
+
+.header-nav__btn {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    line-height: 1.5;
+    color: var(--gray-3);
+    padding: 2px 0;
+    position: relative;
+    text-decoration: none;
+    transition: color 0.25s ease;
+}
+
+.header-nav__btn::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 0;
+    height: 1px;
+    background: var(--white);
+    transition: width 0.3s ease;
+}
+
+.header-nav__btn:hover,
+.header-nav__btn.active { color: var(--white); }
+
+.header-nav__btn:hover::after,
+.header-nav__btn.active::after { width: 100%; }
+
+/* ハンバーガー (900px 以下で表示) */
+.nav-toggle {
+    display: none;
+    position: relative;
+    width: 44px;
+    height: 44px;
+    margin: -4px -8px 0 0;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    pointer-events: all;
+    color: var(--white);
+}
+
+.nav-toggle__bar {
+    position: absolute;
+    left: 9px;
+    right: 9px;
+    height: 2px;
+    background: var(--white);
+    transition: transform 0.3s ease, top 0.3s ease;
+}
+
+.nav-toggle__bar:nth-child(1) { top: 16px; }
+.nav-toggle__bar:nth-child(2) { top: 26px; }
+
+.header.is-open .nav-toggle__bar:nth-child(1) { top: 21px; transform: rotate(45deg); }
+.header.is-open .nav-toggle__bar:nth-child(2) { top: 21px; transform: rotate(-45deg); }
+
+
+/* =====================
+   3. REVEAL (スクロールアニメ)
+   data-reveal="up|down|left|right|fade"  遅延は style="--d:120ms"
+   親に data-reveal-each="up,left,right" を付けると子へ順番に割り当てる。
+   JS が無い時・reduce の時は最初から表示される。
+===================== */
+.js [data-reveal] {
+    opacity: 0;
+    transform: translate3d(var(--rx, 0), var(--ry, 0), 0);
+    transition: opacity 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) var(--d, 0s),
+                transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) var(--d, 0s);
+}
+
+.js [data-reveal="up"]    { --ry: 32px; }
+.js [data-reveal="down"]  { --ry: -32px; }
+.js [data-reveal="left"]  { --rx: -48px; }
+.js [data-reveal="right"] { --rx: 48px; }
+
+.js [data-reveal].is-visible {
+    opacity: 1;
+    transform: none;
+}
+
+
+/* =====================
+   4. BUTTON / LINK
+   .btn = 透明+1px罫線。hover で左から塗りがスライドして反転 (旧 contact-cta__btn)
+   .link-arrow = mono の小さな下線リンク
+   使い方: <a class="btn" href="contact.html">お問い合わせ →</a>
+           <a class="link-arrow" href="news.html">all news →</a>
+===================== */
+.btn,
+.contact-cta__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6em;
+    font-family: var(--font-mono);
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    line-height: 1.5;
+    color: var(--fg);
+    text-decoration: none;
+    background: transparent;
+    border: 1px solid var(--line-strong);
+    padding: 18px 40px;
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    cursor: pointer;
+    transition: color 0.35s ease, border-color 0.35s ease;
+}
+
+.btn::before,
+.contact-cta__btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--fg);
+    transform: translateX(-101%);
+    transition: transform 0.35s ease;
+    z-index: -1;
+}
+
+.btn:hover,
+.btn:focus-visible,
+.contact-cta__btn:hover {
+    color: var(--bg);
+    border-color: var(--fg);
+}
+
+.btn:hover::before,
+.btn:focus-visible::before,
+.contact-cta__btn:hover::before { transform: translateX(0); }
+
+.link-arrow {
+    display: inline-block;
+    width: fit-content;
+    font-family: var(--font-mono);
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    line-height: 1.5;
+    color: var(--fg);
+    text-decoration: none;
+    padding-bottom: 3px;
+    border-bottom: 1px solid currentColor;
+    opacity: 0.78;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.link-arrow:hover {
+    opacity: 1;
+    transform: translateX(4px);
+}
+
+
+/* =====================
+   5. TOP の各セクション (index.html)
+   .section = 面。tone は section--dark / --light / --gray
+   .section--fill = 100vh のヒーロー/ビジョン。それ以外は内容なりの高さ
+   見出し(.section__title + .section__sub)は左上、右下に薄い連番(.section__label)
+===================== */
+.section {
+    position: relative;
+    width: 100%;
+    padding: clamp(112px, 12vw, 168px) var(--gutter) clamp(104px, 10vw, 140px);
+    overflow-x: clip;
+}
+
+.section--fill {
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 190px;
+    padding-bottom: 120px;
+}
+
+.section__label {
+    position: absolute;
+    bottom: 36px;
+    right: 44px;
+    font-family: var(--font-mono);
+    font-size: 15px;
+    font-weight: 300;
+    letter-spacing: 0.22em;
+    opacity: 0.4;
+}
+
+/* 100vh セクションの見出しは左上に固定配置 */
+.section__content {
+    position: absolute;
+    top: 100px;
+    left: var(--gutter);
+    right: var(--gutter);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* 内容なりのセクションの見出し */
+.section__head {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: clamp(48px, 6vw, 80px);
+}
+
+.section__title {
+    font-family: var(--font-display);
+    font-size: clamp(44px, 5vw, 68px);
+    font-weight: 400;
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    white-space: nowrap;
+    transition: letter-spacing 0.4s ease;
+}
+
+.section__title:hover { letter-spacing: 0.03em; }
+
+.section__sub {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 300;
+    letter-spacing: 0.16em;
+    line-height: 1.6;
+    color: var(--fg-dim);
+}
+
+.section::after {
+    content: '';
+    position: absolute;
+    left: 28px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 40%;
+    background: currentColor;
+    opacity: 0.12;
+    pointer-events: none;
+}
+
+/* ---- hero ---- */
+.section--hero {
+    justify-content: center;
+    padding-top: 150px;
+    padding-bottom: 140px;
+}
+
+.hero__kicker {
+    position: absolute;
+    top: 112px;
+    left: var(--gutter);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    line-height: 1.6;
+    color: var(--fg-mute);
+}
+
+.hero__statement {
+    font-family: var(--font-jp-serif);
+    font-size: clamp(2.2rem, 7vw, 7rem);
+    font-weight: 500;
+    line-height: 1.32;
+    letter-spacing: 0.01em;
+    font-feature-settings: 'palt';
+}
+
+.hero__statement span {
+    display: block;
+    white-space: nowrap;
+}
+
+.hero__lead {
+    max-width: 44em;
+    margin-top: clamp(28px, 4vw, 48px);
+    font-family: var(--font-mono);
+    font-size: 15px;
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    line-height: 1.9;
+    color: var(--fg-mute);
+}
+
+.hero__cta { margin-top: clamp(32px, 4vw, 48px); }
+
+.scroll-indicator {
+    position: absolute;
+    bottom: 36px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    height: 44px;
+    background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.35));
+    animation: scrollPulse 2s ease-in-out infinite;
+}
+
+@keyframes scrollPulse {
+    0%, 100% { opacity: 0.35; transform: translateX(-50%) translateY(0); }
+    50%      { opacity: 0.7;  transform: translateX(-50%) translateY(8px); }
+}
+
+/* ---- vision ---- */
+.vision__statement {
+    font-family: var(--font-jp-serif);
+    font-size: clamp(2rem, 5.2vw, 5rem);
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: 0.01em;
+    font-feature-settings: 'palt';
+    color: var(--fg);
+}
+
+.vision__text {
+    max-width: 34em;
+    margin-top: clamp(28px, 3.6vw, 44px);
+    font-size: clamp(16px, 1.3vw, 18px);
+    line-height: 2;
+    color: var(--fg-mute);
+}
+
+.vision__link { margin-top: 36px; }
+
+/* ---- company brain ---- */
+.brain-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: clamp(40px, 6vw, 88px);
+    align-items: start;
+}
+
+.story { border-bottom: 1px solid var(--line); }
+
+.story__item {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr);
+    padding: 26px 0;
+    border-top: 1px solid var(--line);
+}
+
+.story__num {
+    padding-top: 0.5em;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    color: var(--fg-dim);
+}
+
+.story__text {
+    font-size: clamp(16px, 1.3vw, 18px);
+    line-height: 2;
+    color: var(--fg);
+}
+
+.brain-cta { margin-top: 40px; }
+
+/* ---- works (TOP) ---- */
+.works-more {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 40px;
+}
+
+
+/* =====================
+   6. 第2段階用コンポーネント
+   ページの骨組み (index.html の <head>/<header>/<footer> をコピーして title・description・
+   canonical・og:*・active を変える。<main> の中身だけがページ固有):
+     <main>
+       <header class="page-hero"> … </header>                  黒
+       <section class="block block--light"> … </section>       明 (dark / light / gray を交互に)
+       <section class="cta-band" aria-label="…"> … </section>  末尾CTA
+     </main>
+   スクロールアニメは data-reveal="up|left|right|fade" を付けるだけ (JS 側で自動)。
+   大きな日本語見出しは <span class="ph">文節</span> で区切ると折り返しが崩れない。
+   色は面ごとの変数 (--fg / --fg-mute / --fg-dim / --line) で決まるので、部品に色を直書きしない。
+===================== */
+
+/* ---- .page-hero ------------------------------------
+   全内部ページの冒頭。ラベル / 巨大な英字小文字 h1 / 日本語サブ行。
+   <header class="page-hero">
+     <p class="page-hero__label">news archive</p>      (任意。日本語でも可)
+     <h1 class="page-hero__title">news</h1>            (長い英字は --long。company brain)
+     <p class="page-hero__sub">ニュース</p>
+   </header>
+   サブナビを入れる時は page-hero の最後に <nav class="subnav">。
+------------------------------------------------------ */
+.page-hero {
+    position: relative;
+    padding: 170px var(--gutter) 88px;
+    overflow-x: clip;
+}
+
+.page-hero::after {
+    content: '';
+    position: absolute;
+    left: 28px;
+    top: 170px;
+    width: 1px;
+    height: calc(100% - 260px);
+    background: currentColor;
+    opacity: 0.12;
+    pointer-events: none;
+}
+
+.page-hero__label {
+    display: inline-block;
+    margin-bottom: 22px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 300;
+    letter-spacing: 0.24em;
+    line-height: 1.6;
+    color: var(--fg-dim);
+    text-decoration: none;
+}
+
+.page-hero__title {
+    font-family: var(--font-display);
+    font-size: clamp(56px, 13vw, 184px);
+    font-weight: 400;
+    line-height: 0.88;
+    letter-spacing: -0.03em;
+    white-space: nowrap;
+    padding-bottom: 0.1em;
+}
+
+.page-hero__title--long { font-size: clamp(40px, 10.5vw, 150px); }
+
+.page-hero__sub {
+    margin-top: 28px;
+    font-family: var(--font-mono);
+    font-size: 15px;
+    font-weight: 300;
+    letter-spacing: 0.16em;
+    line-height: 1.7;
+    color: var(--fg-mute);
+}
+
+/* ---- .block / .block__grid ---------------------------
+   暗/明を交互に積む帯。上下余白大・最大幅1240px・左右60px(モバイル24px)。
+   <section class="block block--light">               (--dark / --light / --gray)
+     <div class="block__grid">
+       <div class="block__head"><h2 class="block__title">背景</h2></div>   (PC: 左4fr・sticky)
+       <div class="block__body"> ...右8fr。rows/bignum/prose/段落など... </div>
+     </div>
+   </section>
+   全幅の内容(feature / steps / quote-list)は block__grid を使わず、
+   <div class="block__intro"><h2 class="block__title">…</h2></div> を上に置いて直下に並べる。
+   block__body 内の段落は <p class="lead">(大)か <p class="text">(標準・やや淡い) を付ける。
+------------------------------------------------------ */
+.block {
+    position: relative;
+    padding: clamp(80px, 10vw, 136px) var(--gutter);
+    overflow-x: clip;
+}
+
+/* page-hero (黒) の直後の黒ブロックは、間延びしないよう上を詰める */
+.page-hero + .block--dark { padding-top: 24px; }
+
+.block__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    gap: clamp(40px, 5vw, 72px);
+    align-items: start;
+}
+
+.block__head {
+    position: sticky;
+    top: 120px;
+    align-self: start;
+}
+
+.block__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.9rem, 3vw, 2.8rem);
+    font-weight: 400;
+    line-height: 1.4;
+    letter-spacing: 0.01em;
+    font-feature-settings: 'palt';
+}
+
+.block__intro { margin-bottom: clamp(40px, 5vw, 64px); }
+
+/* block__body 内の小見出し(一文)。場面ごとの見出しなど。<h3 class="block__subtitle">…</h3> */
+.block__subtitle {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 2.4vw, 2.1rem);
+    font-weight: 400;
+    line-height: 1.6;
+    letter-spacing: 0.01em;
+    font-feature-settings: 'palt';
+}
+
+.block__body > .block__subtitle:not(:first-child) { margin-top: clamp(56px, 7vw, 88px); }
+
+.block__intro .block__title {
+    max-width: 24em;
+    font-size: clamp(2.2rem, 4.2vw, 3.6rem);
+    line-height: 1.4;
+}
+
+.block__body > * + * { margin-top: 28px; }
+
+/* ---- .lead -----------------------------------------
+   ページ冒頭のリード文。<p class="lead">…</p>
+------------------------------------------------------ */
+.lead {
+    max-width: 38em;
+    font-size: clamp(1.1rem, 1.7vw, 1.4rem);
+    font-weight: 300;
+    line-height: 2;
+    color: var(--fg);
+}
+
+.text {
+    max-width: 38em;
+    font-size: clamp(16px, 1.3vw, 18px);
+    line-height: 2;
+    color: var(--fg-mute);
+}
+
+/* ---- .rows / .row ----------------------------------
+   罫線の行リスト。番号・ラベル・タイトル・本文・タグ・状況。
+   <ol class="rows">                         (services は rows--split: タイトル|本文の2段)
+     <li class="row" data-reveal="up">
+       <span class="row__num">01</span>
+       <p class="row__label">業務ソフトウェア向け</p>        (任意)
+       <h3 class="row__title">タイトル</h3>
+       <p class="row__body">本文</p>
+       <ul class="tags"><li>React</li><li>Python</li></ul>   (任意)
+       <p class="row__meta"><span>2026.06〜</span><span>開発中</span></p>   (任意。ラベルの右端に出る)
+     </li>
+   </ol>
+------------------------------------------------------ */
+.rows { border-bottom: 1px solid var(--line); }
+
+.row {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr);
+    padding: clamp(28px, 3.4vw, 40px) 0;
+    border-top: 1px solid var(--line);
+    transition: border-color 0.3s ease;
+}
+
+.row:hover { border-top-color: var(--line-strong); }
+
+.row__num {
+    grid-column: 1;
+    grid-row: 1 / span 6;
+    padding-top: 0.6em;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    color: var(--fg-dim);
+}
+
+.row > *:not(.row__num) { grid-column: 2; }
+
+.row__label {
+    grid-row: 1;
+    margin-bottom: 10px;
+    justify-self: start;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 300;
+    letter-spacing: 0.12em;
+    line-height: 1.6;
+    color: var(--fg-dim);
+}
+
+.row__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.35rem, 2.1vw, 1.8rem);
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: 0.01em;
+}
+
+.row__body {
+    max-width: 38em;
+    margin-top: 16px;
+    font-size: clamp(16px, 1.3vw, 17px);
+    line-height: 1.95;
+    color: var(--fg-mute);
+}
+
+.row .tags { margin-top: 22px; }
+
+.row__meta {
+    grid-row: 1;
+    justify-self: end;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1.2em;
+    margin-bottom: 10px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 300;
+    letter-spacing: 0.1em;
+    line-height: 1.6;
+    color: var(--fg-dim);
+}
+
+.row__meta-k { margin-right: 0.6em; opacity: 0.7; }
+
+/* 領域 | 技術 の行 (services)。rows--split の中で <h3 class="row__title">領域</h3><p class="row__tech">React / Python</p> */
+.row__tech {
+    margin-top: 12px;
+    font-family: var(--font-mono);
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    line-height: 1.9;
+    color: var(--fg-mute);
+    overflow-wrap: anywhere;
+}
+
+/* services / TOP の works: (ラベル+タイトル) | (本文 または row__tech または tags) の2段。row__meta は付けない */
+.rows--split .row {
+    grid-template-columns: 72px minmax(0, 5fr) minmax(0, 7fr);
+    grid-template-rows: auto 1fr;
+    column-gap: 40px;
+}
+
+.rows--split .row__label { grid-column: 2; grid-row: 1; }
+.rows--split .row__title { grid-column: 2; grid-row: 2; }
+.rows--split .row__body  { grid-column: 3; grid-row: 1 / span 2; margin-top: 0.4em; }
+.rows--split .row__tech,
+.rows--split .tags       { grid-column: 3; grid-row: 1 / span 2; margin-top: 0.4em; }
+
+/* 番号なしの split (services の領域|技術)。<ul class="rows rows--split rows--nonum"> で row__num を置かない */
+.rows--nonum .row { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+.rows--nonum .row__label,
+.rows--nonum .row__title { grid-column: 1; }
+.rows--nonum .row__body,
+.rows--nonum .row__tech,
+.rows--nonum .tags { grid-column: 2; }
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tags li {
+    padding: 3px 10px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    line-height: 1.6;
+    color: var(--fg-mute);
+    border: 1px solid var(--line);
+}
+
+/* ---- .bignum ---------------------------------------
+   縦の巨大連番リスト。1→3 で右へ少しずつずれる。
+   <ol class="bignum">
+     <li class="bignum__item" data-reveal="right">
+       <span class="bignum__num">1</span>
+       <div><h3 class="bignum__title">入口がひとつ</h3><p class="bignum__body">本文</p></div>
+     </li>
+   </ol>
+------------------------------------------------------ */
+.bignum { border-bottom: 1px solid var(--line); }
+
+.bignum__item {
+    display: grid;
+    grid-template-columns: clamp(72px, 9vw, 150px) minmax(0, 1fr);
+    align-items: start;
+    gap: clamp(16px, 3vw, 40px);
+    padding: clamp(28px, 3.6vw, 44px) 0;
+    border-top: 1px solid var(--line);
+}
+
+.bignum__item:nth-child(2) { margin-left: clamp(0px, 3.6vw, 56px); }
+.bignum__item:nth-child(3) { margin-left: clamp(0px, 7.2vw, 112px); }
+
+.bignum__num {
+    font-family: var(--font-display);
+    font-size: clamp(64px, 9vw, 140px);
+    line-height: 0.85;
+    opacity: 0.2;
+}
+
+.bignum__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 2.2vw, 1.9rem);
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: 0.01em;
+}
+
+.bignum__body {
+    max-width: 34em;
+    margin-top: 14px;
+    font-size: clamp(16px, 1.3vw, 17px);
+    line-height: 1.95;
+    color: var(--fg-mute);
+}
+
+/* ---- .steps ----------------------------------------
+   横並びの巨大連番。罫線区切りで、カードにしない。モバイルは縦。
+   <ol class="steps">
+     <li class="step" data-reveal="up">
+       <span class="step__num">1</span>
+       <h3 class="step__title">ヒアリング</h3>
+       <p class="step__body">課題と現状の業務を伺います。</p>   (任意)
+     </li>
+   </ol>
+------------------------------------------------------ */
+.steps {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+}
+
+.step {
+    padding: 36px 28px 44px;
+    border-left: 1px solid var(--line);
+}
+
+.step:first-child {
+    padding-left: 0;
+    border-left: 0;
+}
+
+.step__num {
+    display: block;
+    margin-bottom: 24px;
+    font-family: var(--font-display);
+    font-size: clamp(3.6rem, 5.6vw, 4.8rem);
+    line-height: 1;
+    opacity: 0.2;
+}
+
+.step__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.1rem, 1.6vw, 1.4rem);
+    font-weight: 400;
+    line-height: 1.6;
+    letter-spacing: 0.01em;
+}
+
+.step__body {
+    margin-top: 12px;
+    font-size: 15px;
+    line-height: 1.9;
+    color: var(--fg-mute);
+}
+
+/* ---- .feature / .frame -----------------------------
+   左テキスト・右画像。--reverse で反転。block 直下(全幅)に置く。
+   <div class="feature" data-reveal="left">                (2つ目は feature--reverse)
+     <div class="feature__text"><h3 class="feature__title">見出し</h3><p class="feature__body">本文</p></div>
+     <div class="feature__media"><figure class="frame"><img src="assets/x.png" alt="…" width="1484" height="1208" loading="lazy"></figure></div>
+   </div>
+   画像の代わりに <div class="feature__media"><blockquote class="pullquote"><p>一文</p></blockquote></div> も可。
+------------------------------------------------------ */
+.feature {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: clamp(32px, 6vw, 88px);
+    align-items: center;
+    padding: clamp(40px, 6vw, 72px) 0;
+    border-top: 1px solid var(--line);
+}
+
+.feature--reverse { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+.feature--reverse .feature__text { order: 2; }
+
+.feature__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 2.6vw, 2.3rem);
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: 0.01em;
+}
+
+.feature__body {
+    max-width: 34em;
+    margin-top: 20px;
+    font-size: clamp(16px, 1.3vw, 17px);
+    line-height: 1.95;
+    color: var(--fg-mute);
+}
+
+.frame {
+    padding: 8px;
+    border: 1px solid var(--line-strong);
+    background: transparent;
+}
+
+.frame img {
+    width: 100%;
+    height: auto;
+}
+
+/* ---- .pullquote ------------------------------------
+   大きな引用符つきの一文。<blockquote class="pullquote"><p>一文</p></blockquote>
+------------------------------------------------------ */
+.pullquote {
+    font-family: var(--font-display);
+    font-size: clamp(1.9rem, 3.6vw, 3rem);
+    font-weight: 400;
+    line-height: 1.55;
+    letter-spacing: 0.01em;
+    font-feature-settings: 'palt';
+}
+
+.pullquote::before {
+    content: '\201C';
+    display: block;
+    margin-bottom: 0.15em;
+    font-size: 2.8em;
+    line-height: 0.6;
+    opacity: 0.25;
+}
+
+/* ---- .quote-list -----------------------------------
+   引用符つきの大きな罫線行リスト。
+   <ul class="quote-list">                        (行を左右にずらすなら quote-list--stagger を追加)
+     <li class="quote-list__item" data-reveal="left">出張旅費の精算方法を教えて</li>
+   </ul>
+------------------------------------------------------ */
+.quote-list { border-bottom: 1px solid var(--line); }
+
+.quote-list__item {
+    display: grid;
+    grid-template-columns: clamp(44px, 5vw, 76px) minmax(0, 1fr);
+    align-items: baseline;
+    padding: clamp(24px, 3.2vw, 40px) 0;
+    border-top: 1px solid var(--line);
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 2.6vw, 2.3rem);
+    line-height: 1.5;
+    letter-spacing: 0.01em;
+    transition: border-color 0.3s ease;
+}
+
+.quote-list__item::before {
+    content: '\201C';
+    font-size: 1.7em;
+    line-height: 0.5;
+    opacity: 0.3;
+}
+
+.quote-list__item:hover { border-top-color: var(--line-strong); }
+
+/* 偶数行を右へずらす (左右に少しずらす見せ方)。<ul class="quote-list quote-list--stagger"> */
+.quote-list--stagger .quote-list__item:nth-child(even) { margin-left: clamp(0px, 5vw, 72px); }
+
+/* ---- .statement ------------------------------------
+   mono ラベル + 大きなセリフの一文 (vision.html)。
+   <div class="statement" data-reveal="up">
+     <p class="statement__label">ミッション</p>
+     <p class="statement__text"><span class="ph">会社の知識を、</span><span class="ph">ひとつの脳にする。</span></p>
+   </div>
+------------------------------------------------------ */
+.statement {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    gap: clamp(24px, 5vw, 72px);
+    padding: clamp(40px, 5vw, 64px) 0;
+    border-top: 1px solid var(--line);
+}
+
+.statement:last-child { border-bottom: 1px solid var(--line); }
+
+.statement__label {
+    padding-top: 1.1em;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 300;
+    letter-spacing: 0.24em;
+    line-height: 1.6;
+    color: var(--fg-dim);
+}
+
+.statement__text {
+    font-family: var(--font-jp-serif);
+    font-size: clamp(2rem, 4.4vw, 3.8rem);
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: 0.01em;
+    font-feature-settings: 'palt';
+    color: var(--fg);
+}
+
+/* ---- .timeline -------------------------------------
+   縦罫線 + mono の日付。
+   <ol class="timeline">
+     <li class="timeline__item" data-reveal="up">
+       <time class="timeline__date" datetime="2026-04">2026.04</time>
+       <p class="timeline__title">合同会社 nerdech を設立</p>
+     </li>
+   </ol>
+------------------------------------------------------ */
+.timeline__item {
+    display: grid;
+    grid-template-columns: 9em minmax(0, 1fr);
+}
+
+.timeline__date {
+    padding-top: 0.4em;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 300;
+    letter-spacing: 0.18em;
+    color: var(--fg-dim);
+}
+
+.timeline__title {
+    position: relative;
+    padding: 0 0 36px 32px;
+    border-left: 1px solid var(--line-strong);
+    font-family: var(--font-display);
+    font-size: clamp(1.15rem, 1.7vw, 1.4rem);
+    line-height: 1.7;
+    color: var(--fg);
+}
+
+.timeline__title::before {
+    content: '';
+    position: absolute;
+    left: -4px;
+    top: 0.75em;
+    width: 7px;
+    height: 7px;
+    background: var(--fg);
+}
+
+.timeline__item:last-child .timeline__title { padding-bottom: 0; }
+
+/* ---- .subnav ---------------------------------------
+   company / message 用の小さなタブ。page-hero の末尾に置く。
+   <nav class="subnav" aria-label="会社情報">
+     <a class="subnav__link active" href="company.html" aria-current="page">概要</a>
+     <a class="subnav__link" href="message.html">代表挨拶</a>
+   </nav>
+------------------------------------------------------ */
+.subnav {
+    display: flex;
+    gap: 32px;
+    margin-top: 48px;
+    border-bottom: 1px solid var(--line);
+}
+
+.subnav__link {
+    margin-bottom: -1px;
+    padding: 10px 0;
+    font-family: var(--font-mono);
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    line-height: 1.5;
+    color: var(--fg-dim);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: color 0.25s ease, border-color 0.25s ease;
+}
+
+.subnav__link:hover,
+.subnav__link.active {
+    color: var(--fg);
+    border-bottom-color: var(--fg);
+}
+
+/* ---- .prose ----------------------------------------
+   法務文書。番号つき見出しと段落。行長 40em。
+   <div class="prose">
+     <p class="prose__lead">前文</p>
+     <section class="prose__section">
+       <h2 class="prose__title"><span class="prose__num">1</span>取得する情報</h2>
+       <p>本文</p>
+     </section>
+     <p class="prose__date">制定日: 2026年9月25日</p>
+   </div>
+------------------------------------------------------ */
+.prose { max-width: 40em; }
+
+.prose__lead {
+    font-size: clamp(16px, 1.3vw, 18px);
+    line-height: 2;
+    color: var(--fg);
+}
+
+.prose__section {
+    margin-top: 48px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+}
+
+.prose__title {
+    display: flex;
+    align-items: baseline;
+    gap: 1.1em;
+    margin-bottom: 14px;
+    font-family: var(--font-jp-serif);
+    font-size: clamp(1.25rem, 1.8vw, 1.5rem);
+    font-weight: 500;
+    line-height: 1.6;
+}
+
+.prose__num {
+    min-width: 1.6em;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    color: var(--fg-dim);
+}
+
+.prose p + p { margin-top: 1em; }
+
+.prose__section p,
+.prose__section li {
+    font-size: 16px;
+    line-height: 2;
+    color: var(--fg-mute);
+}
+
+.prose__section a { color: var(--fg); }
+
+.prose__date {
+    margin-top: 56px;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    letter-spacing: 0.14em;
+    color: var(--fg-dim);
+}
+
+/* ---- .cta-band -------------------------------------
+   全ページ末尾のCTA。<main> の最後、footer の直前に置く。
+   <section class="cta-band" aria-label="お問い合わせ">
+     <p class="cta-band__lead">…</p>              (任意。無ければボタンのみ)
+     <a class="btn" href="contact.html">お問い合わせ →</a>
+   </section>
+------------------------------------------------------ */
+.cta-band {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px 64px;
+    padding: clamp(80px, 10vw, 132px) var(--gutter);
+    border-top: 1px solid var(--line);
+    overflow-x: clip;
+}
+
+.cta-band__lead {
+    flex: 1 1 22em;
+    max-width: 26em;
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 3.2vw, 2.4rem);
+    font-weight: 400;
+    line-height: 1.7;
+    letter-spacing: 0.01em;
+}
+
+.cta-band .btn {
+    font-size: 18px;
+    padding: 22px 52px;
+}
+
+/* ---- .banner-link ----------------------------------
+   罫線の帯リンク (company.html → 代表挨拶)。hover で罫線が濃くなり矢印が動く。
+   <a class="banner-link" href="message.html"><span>代表挨拶</span><span class="banner-link__arrow" aria-hidden="true">→</span></a>
+------------------------------------------------------ */
+.banner-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: clamp(28px, 4vw, 48px) clamp(20px, 3vw, 40px);
+    border: 1px solid var(--line);
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    line-height: 1.5;
+    color: var(--fg);
+    text-decoration: none;
+    transition: border-color 0.3s ease;
+}
+
+.banner-link:hover { border-color: var(--line-strong); }
+
+.banner-link__arrow {
+    font-family: var(--font-mono);
+    transition: transform 0.25s ease;
+}
+
+.banner-link:hover .banner-link__arrow { transform: translateX(6px); }
+
+/* ---- .letter ---------------------------------------
+   代表挨拶などの読み物。行長 34em。署名は letter__sign (mono)。
+   <div class="letter"><p>段落</p><p>段落</p><p class="letter__sign">合同会社 nerdech 代表 木戸 隆正</p></div>
+   大きな一文は .statement__text をそのまま単体で使える (<p class="statement__text">…</p>)。
+------------------------------------------------------ */
+.letter { max-width: 34em; }
+
+.letter p {
+    font-size: clamp(16px, 1.3vw, 18px);
+    line-height: 2.1;
+    color: var(--fg-mute);
+}
+
+.letter p + p { margin-top: 1.6em; }
+
+.letter .letter__sign {
+    margin-top: 3em;
+    font-family: var(--font-mono);
+    font-size: 15px;
+    letter-spacing: 0.1em;
+    color: var(--fg);
+}
+
+/* ---- .company-list ---------------------------------
+   会社概要の dl。
+   <dl class="company-list">
+     <div class="company-list__row"><dt>社名</dt><dd>合同会社 nerdech</dd></div>
+   </dl>
+------------------------------------------------------ */
+.company-list { border-bottom: 1px solid var(--line); }
+
+.company-list__row {
+    display: grid;
+    grid-template-columns: minmax(96px, 0.28fr) minmax(0, 1fr);
+    gap: 24px;
+    padding: 22px 0;
+    border-top: 1px solid var(--line);
+}
+
+.company-list dt {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 300;
+    letter-spacing: 0.14em;
+    line-height: 2;
+    color: var(--fg-dim);
+}
+
+.company-list dd {
+    font-size: 16px;
+    line-height: 1.9;
+    color: var(--fg);
+    overflow-wrap: anywhere;
+}
+
+/* ---- .card / .cards --------------------------------
+   透明・1px罫線・角丸0・影なし。番号 → ラベル → タイトル → 罫線 → 本文。hover で罫線が濃くなるだけ。
+   <div class="cards">                              (2列。cards--1 で1列)
+     <article class="card">
+       <span class="card__num">01</span>
+       <p class="card__label">ラベル</p>            (任意)
+       <h3 class="card__title">タイトル</h3>
+       <p class="card__body">本文</p>
+     </article>
+   </div>
+   全体をリンクにする時は <a class="card" href="…"> にする。
+------------------------------------------------------ */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.cards--1 { grid-template-columns: 1fr; }
+
+.card {
+    display: flex;
+    flex-direction: column;
+    background: transparent;
+    border: 1px solid var(--line);
+    color: inherit;
+    text-decoration: none;
+    transition: border-color 0.3s ease;
+}
+
+.card:hover { border-color: var(--line-strong); }
+
+.card__num {
+    padding: 24px 32px 0;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    color: var(--fg-dim);
+}
+
+.card__label {
+    padding: 14px 32px 0;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 300;
+    letter-spacing: 0.1em;
+    line-height: 1.6;
+    color: var(--fg-dim);
+}
+
+.card__title {
+    padding: 14px 32px 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.3rem, 1.9vw, 1.65rem);
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: 0.01em;
+}
+
+.card__body {
+    flex: 1;
+    margin-top: 22px;
+    padding: 22px 32px 32px;
+    border-top: 1px solid var(--line);
+    font-size: 16px;
+    line-height: 1.9;
+    color: var(--fg-mute);
+}
+
+/* ---- .work-feature ---------------------------------
+   works の特集カード(全幅・大・リンクなし)。TOP と works.html で共用。
+   <article class="work-feature">
+     <div class="work-feature__main">
+       <p class="work-feature__label">Webマーケティング会社とのラボ型協業</p>
+       <h3 class="work-feature__title">タイトル</h3>
+       <p class="work-feature__body">本文</p>
+     </div>
+     <div class="work-feature__side">
+       <ul class="tags"><li>LP自動生成</li><li>画像生成</li></ul>
+       <p class="row__meta"><span><span class="row__meta-k">状況</span>協業継続中</span><span><span class="row__meta-k">期間</span>2026.06〜</span></p>
+     </div>
+   </article>
+------------------------------------------------------ */
+.work-feature {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: clamp(32px, 5vw, 72px);
+    padding: clamp(28px, 4.4vw, 56px);
+    margin-bottom: clamp(32px, 4vw, 56px);
+    border: 1px solid var(--line);
+}
+
+.work-feature__label {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 300;
+    letter-spacing: 0.12em;
+    line-height: 1.6;
+    color: var(--fg-dim);
+}
+
+.work-feature__title {
+    margin-top: 20px;
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 3.4vw, 3rem);
+    font-weight: 400;
+    line-height: 1.45;
+    letter-spacing: 0.01em;
+    font-feature-settings: 'palt';
+}
+
+.work-feature__body {
+    max-width: 34em;
+    margin-top: 24px;
+    font-size: clamp(16px, 1.3vw, 17px);
+    line-height: 1.95;
+    color: var(--fg-mute);
+}
+
+.work-feature__side {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    gap: 22px;
+}
+
+.work-feature__side .row__meta {
+    grid-row: auto;
+    justify-self: auto;
+    margin-bottom: 0;
+}
+
+
+/* =====================
+   7. NEWS
+   news-render.js が生成する .news-item / __date / __content / __title / __body / __link に当てる。
+   <div class="news-list" data-news-list data-news-heading="h2"> … 静的フォールバック … </div>
+===================== */
+.news-list {
+    display: grid;
+    width: 100%;
+    border-top: 1px solid var(--line);
+}
+
+.news-item {
+    display: grid;
+    grid-template-columns: minmax(140px, 0.24fr) minmax(0, 1fr);
+    gap: 28px;
+    padding: 32px 0;
+    border-bottom: 1px solid var(--line);
+    position: relative;
+    transition: border-color 0.3s ease, transform 0.3s ease;
+}
+
+.news-item::before {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 1px;
+    background: var(--fg);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.news-item:hover {
+    border-bottom-color: var(--line-strong);
+    transform: translateX(6px);
+}
+
+.news-item:hover::before { opacity: 0.5; }
+
+.news-item__date {
+    padding-top: 0.6em;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 300;
+    letter-spacing: 0.18em;
+    color: var(--fg-dim);
+    white-space: nowrap;
+}
+
+.news-item__content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.news-item__title {
+    font-family: var(--font-display);
+    font-size: clamp(1.35rem, 2.4vw, 2rem);
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: 0.01em;
+    color: var(--fg);
+}
+
+.news-item__body {
+    max-width: 40em;
+    font-size: 16px;
+    line-height: 1.95;
+    color: var(--fg-mute);
+}
+
+.news-item__link,
+.news-more__link {
+    width: fit-content;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    color: var(--fg);
+    text-decoration: none;
+    border-bottom: 1px solid currentColor;
+    opacity: 0.75;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.news-item__link:hover,
+.news-more__link:hover {
+    opacity: 1;
+    transform: translateX(4px);
+}
+
+.news-more {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    margin-top: 32px;
+}
+
+
+/* =====================
+   8. FOOTER
+   全ページ共通。index.html の <footer> をそのままコピーする。
+===================== */
+.footer {
+    position: relative;
+    border-top: 1px solid var(--gray-2);
+}
+
+.footer__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 4fr) minmax(0, 5fr);
+    align-items: start;
+    gap: 48px;
+    padding: 72px var(--gutter) 64px;
+}
+
+.footer__brand-link {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: fit-content;
+    text-decoration: none;
+}
+
+.footer__logo {
+    font-family: var(--font-display);
+    font-size: 48px;
+    line-height: 1;
+    letter-spacing: -2px;
+}
+
+.footer__name {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 300;
+    letter-spacing: 0.18em;
+    color: var(--gray-3);
+}
+
+.footer__contact {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.footer__block {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.footer__label {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 300;
+    letter-spacing: 0.22em;
+    line-height: 1.6;
+    color: var(--gray-3);
+}
+
+.footer__value {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    line-height: 1.8;
+    color: var(--white);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+a.footer__value:hover { color: var(--gray-4); }
+
+.footer__sitemap {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.footer__sitemap-list {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-rows: repeat(3, auto);
+    grid-auto-columns: max-content;
+    gap: 12px 44px;
+}
+
+.footer__sitemap-link {
+    position: relative;
+    display: inline-block;
+    width: fit-content;
+    padding: 2px 0;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    line-height: 1.6;
+    color: var(--white);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.footer__sitemap-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--white);
+    transition: width 0.3s ease;
+}
+
+.footer__sitemap-link:hover::after,
+.footer__sitemap-link[aria-current="page"]::after { width: 100%; }
+
+.footer__bottom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 32px;
+    padding: 22px var(--gutter);
+    border-top: 1px solid var(--gray-2);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 300;
+    letter-spacing: 0.12em;
+    color: var(--gray-3);
+}
+
+.footer__legal {
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    color: var(--gray-4);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.footer__legal:hover {
+    color: var(--white);
+    border-bottom-color: currentColor;
+}
+
+
+/* =====================
+   9. CONTACT PAGE (contact.html)
+===================== */
+.contact-split {
+    display: grid;
+    grid-template-columns: 9fr 11fr;
+    min-height: 100vh;
+}
+
+/* ── 左パネル ── */
+.contact-split__left {
+    --bg: var(--off-white);
+    --fg: var(--black);
+    --fg-mute: #3e3e3a;
+    --fg-dim: var(--gray-5);
+    --line: rgba(10, 10, 10, 0.14);
+    --line-strong: rgba(10, 10, 10, 0.36);
+    background: var(--off-white);
+    color: var(--black);
+    display: flex;
+    flex-direction: column;
+    padding: 128px 56px 44px;
+    border-right: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.cs-top {
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--line);
+}
+
+.cs-back {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 300;
+    letter-spacing: 0.16em;
+    color: var(--gray-5);
+    text-decoration: none;
+    transition: color 0.25s ease;
+}
+
+.cs-back:hover { color: var(--black); }
+
+.cs-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 28px;
+    padding: 48px 0;
+}
+
+.cs-label {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 300;
+    letter-spacing: 0.24em;
+    color: var(--gray-5);
+}
+
+.cs-statement {
+    /* 左パネル幅 = 40vw - 112px。最長行7文字が収まる */
+    font-family: var(--font-jp-serif);
+    font-size: clamp(26px, calc((40vw - 112px) / 7.8), 56px);
+    font-weight: 500;
+    line-height: 1.55;
+    letter-spacing: 0;
+    color: var(--black);
+}
+
+.cs-statement span {
+    display: block;
+    white-space: nowrap;
+}
+
+.cs-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-top: 28px;
+    border-top: 1px solid var(--line);
+}
+
+.cs-address {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.cs-address__line {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 300;
+    letter-spacing: 0.06em;
+    line-height: 1.8;
+    color: var(--gray-5);
+}
+
+.cs-copy {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 300;
+    letter-spacing: 0.14em;
+    color: var(--gray-5);
+}
+
+/* ── 右パネル ── */
+.contact-split__right {
+    background: var(--black);
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 128px 140px 72px 56px; /* 右は固定ナビ(縦積み)を避ける余白 */
+}
+
+.cs-right__inner {
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.cs-right__header {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 300;
+    letter-spacing: 0.2em;
+    color: var(--gray-4);
+}
+
+.cs-right__note {
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.9;
+    color: var(--gray-4);
+}
+
+.cs-right__note a {
+    color: var(--white);
+    text-decoration: none;
+    border-bottom: 1px solid currentColor;
+}
+
+.cs-right__note a:hover { opacity: 0.75; }
+
+.cs-right__note p + p { margin-top: 4px; }
+
+.form-notice {
+    padding: 22px 24px;
+    border: 2px solid var(--white);
+    font-size: 16px;
+    line-height: 1.9;
+    color: var(--white);
+}
+
+.form-notice--error { border-left-width: 10px; }
+
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.contact-form__row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px 22px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.contact-form__label {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    color: var(--gray-4);
+}
+
+.contact-form__input {
+    font-family: var(--font-jp-sans);
+    font-size: 16px;
+    font-weight: 300;
+    letter-spacing: 0.02em;
+    line-height: 1.7;
+    color: var(--white);
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    outline: none;
+    width: 100%;
+    padding: 0;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.contact-form__row:focus-within { border-bottom-color: rgba(255, 255, 255, 0.5); }
+
+.contact-form__select {
+    cursor: pointer;
+    padding-right: 28px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'><path d='M1 1.5l5 5 5-5' stroke='%23c8c8c8' stroke-width='1.2'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 2px center;
+}
+
+.contact-form__select option {
+    background: var(--black);
+    color: var(--white);
+}
+
+.contact-form__textarea {
+    resize: none;
+    min-height: 168px;
+    line-height: 1.9;
+}
+
+.contact-form__footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 16px 22px;
+}
+
+.contact-form__submit {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    color: var(--white);
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.34);
+    padding: 14px 32px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    transition: border-color 0.3s ease, color 0.3s ease;
+}
+
+.contact-form__submit::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--white);
+    transform: translateX(-101%);
+    transition: transform 0.3s ease;
+    z-index: -1;
+}
+
+.contact-form__submit:hover,
+.contact-form__submit:focus-visible {
+    color: var(--black);
+    border-color: var(--white);
+}
+
+.contact-form__submit:hover::before,
+.contact-form__submit:focus-visible::before { transform: translateX(0); }
+
+
+/* =====================
+   10. EFFECTS (site.js が生成。モバイル/reduce では作られない)
+===================== */
+.cursor-glow {
+    position: fixed;
+    top: -200px;
+    left: -200px;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.04) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 9999;
+}
+
+.scanline {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.03);
+    pointer-events: none;
+    z-index: 9998;
+    animation: scan 6s linear infinite;
+}
+
+@keyframes scan {
+    0%   { top: -2px; opacity: 0; }
+    5%   { opacity: 1; }
+    95%  { opacity: 1; }
+    100% { top: 100vh; opacity: 0; }
+}
+
+.particle-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+
+/* =====================
+   11. REDUCED MOTION
+===================== */
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+
+    .scanline,
+    .scroll-indicator { animation: none; }
+
+    .cursor-glow,
+    .scanline,
+    .particle-canvas { display: none; }
+
+    .js [data-reveal] {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+
+    .section__title,
+    .header-nav__btn,
+    .header-nav__btn::after,
+    .nav-toggle__bar,
+    .btn,
+    .btn::before,
+    .contact-cta__btn,
+    .contact-cta__btn::before,
+    .link-arrow,
+    .card,
+    .row,
+    .quote-list__item,
+    .news-item,
+    .news-item::before,
+    .news-item__link,
+    .news-more__link,
+    .footer__sitemap-link,
+    .footer__sitemap-link::after,
+    .footer__legal,
+    .subnav__link,
+    .banner-link,
+    .banner-link__arrow,
+    .cs-back,
+    .contact-form__submit,
+    .contact-form__submit::before { transition: none; }
+
+    .news-item:hover,
+    .banner-link:hover .banner-link__arrow,
+    .link-arrow:hover,
+    .news-item__link:hover,
+    .news-more__link:hover { transform: none; }
+}
+
+
+/* =====================
+   12. RESPONSIVE
+===================== */
+@media (max-width: 960px) {
+    :root { --gutter: 40px; }
+
+    .brain-grid { grid-template-columns: 1fr; }
+
+    .block__grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+
+    .block__head { position: static; }
+
+    .statement {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .statement__label { padding-top: 0; }
+
+    .feature,
+    .feature--reverse {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+
+    .feature--reverse .feature__text { order: 0; }
+
+    .work-feature { grid-template-columns: 1fr; }
+
+    .work-feature__side { justify-content: flex-start; }
+
+    .rows--split .row {
+        grid-template-columns: 72px minmax(0, 1fr);
+        grid-template-rows: none;
+        column-gap: 0;
+    }
+
+    .rows--split .row__label,
+    .rows--split .row__title,
+    .rows--split .row__body,
+    .rows--split .row__tech,
+    .rows--split .tags {
+        grid-column: 2;
+        grid-row: auto;
+    }
+
+    .rows--split .row__body,
+    .rows--split .row__tech,
+    .rows--split .tags { margin-top: 12px; }
+
+    .rows--nonum .row { grid-template-columns: minmax(0, 1fr); }
+
+    .rows--nonum .row__label,
+    .rows--nonum .row__title,
+    .rows--nonum .row__body,
+    .rows--nonum .row__tech,
+    .rows--nonum .tags { grid-column: 1; }
+
+    /* steps は縦積み */
+    .steps {
+        grid-auto-flow: row;
+        grid-auto-columns: auto;
+        border-bottom: 0;
+    }
+
+    .step,
+    .step:first-child {
+        display: grid;
+        grid-template-columns: clamp(56px, 12vw, 88px) minmax(0, 1fr);
+        column-gap: 20px;
+        padding: 28px 0;
+        border-left: 0;
+        border-bottom: 1px solid var(--line);
+    }
+
+    .step__num {
+        grid-row: 1 / span 2;
+        margin-bottom: 0;
+        font-size: clamp(3.2rem, 9vw, 4.4rem);
+    }
+
+    .step__title,
+    .step__body { grid-column: 2; }
+
+    .footer__inner {
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+    }
+
+    .footer__sitemap { grid-column: 1 / -1; }
+
+    .cards { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 900px) {
+    /* ---- ハンバーガー ---- */
+    .header { padding: 18px 20px 0 24px; }
+
+    .logo { font-size: 36px; }
+
+    .nav-toggle { display: block; }
+
+    .header__logo,
+    .nav-toggle {
+        position: relative;
+        z-index: 2;
+    }
+
+    .header-nav {
+        position: fixed;
+        inset: 0;
+        z-index: 1;
+        align-items: flex-start;
+        justify-content: flex-start;
+        gap: 4px;
+        padding: 140px 28px 56px;
+        background: var(--black);
+        overflow-y: auto;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+    }
+
+    .header.is-open { mix-blend-mode: normal; }
+
+    .header.is-open .header-nav {
+        opacity: 1;
+        visibility: visible;
+        transition: opacity 0.3s ease;
+    }
+
+    .header-nav__btn {
+        font-size: 24px;
+        letter-spacing: 0.1em;
+        padding: 10px 0;
+        color: var(--gray-4);
+    }
+
+    .header-nav__btn::after {
+        right: auto;
+        left: 0;
+    }
+
+    /* 走査線・光暈は出さない (JS でも生成しない) */
+    .scanline,
+    .cursor-glow { display: none; }
+
+    .section::after,
+    .page-hero::after { display: none; }
+
+    .scroll-indicator { bottom: 28px; }
+
+    .section__label {
+        right: 24px;
+        bottom: 24px;
+    }
+
+    .section--fill {
+        padding-top: 200px;
+        padding-bottom: 120px;
+    }
+
+    .section--hero {
+        padding-top: 160px;
+        padding-bottom: 130px;
+    }
+
+    .section__content,
+    .hero__kicker {
+        top: 108px;
+    }
+
+    .page-hero { padding-top: 132px; padding-bottom: 64px; }
+
+    .contact-split {
+        grid-template-columns: 1fr;
+        min-height: 0;
+    }
+
+    .contact-split__left {
+        padding: 112px 28px 36px;
+        border-right: 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .cs-main {
+        flex: none;
+        padding: 32px 0 28px;
+        justify-content: flex-start;
+    }
+
+    .cs-statement { font-size: clamp(28px, 8.2vw, 44px); }
+
+    .contact-split__right {
+        padding: 44px 28px 64px;
+        align-items: flex-start;
+        justify-content: flex-start;
+    }
+
+    .cs-right__inner { max-width: 100%; }
+}
+
+@media (max-width: 600px) {
+    :root { --gutter: 24px; }
+
+    .section__title { font-size: clamp(40px, 12vw, 52px); }
+
+    .hero__lead { font-size: 15px; }
+
+    .btn { padding: 16px 28px; }
+
+    .cta-band .btn {
+        width: 100%;
+        justify-content: center;
+        padding: 20px 16px;
+        font-size: 16px;
+        letter-spacing: 0.06em;
+    }
+
+    .row {
+        grid-template-columns: 1fr;
+    }
+
+    .row__num {
+        grid-column: 1;
+        grid-row: auto;
+        padding-top: 0;
+        margin-bottom: 14px;
+    }
+
+    .row > *:not(.row__num) { grid-column: 1; }
+
+    .row__label { grid-row: auto; }
+
+    .row__meta {
+        grid-row: auto;
+        justify-self: start;
+        margin: 16px 0 0;
+    }
+
+    .rows--split .row,
+    .rows--nonum .row { grid-template-columns: 1fr; }
+
+    .rows--split .row__label,
+    .rows--split .row__title,
+    .rows--split .row__body,
+    .rows--split .row__tech,
+    .rows--split .tags { grid-column: 1; }
+
+    .bignum__item {
+        grid-template-columns: 56px minmax(0, 1fr);
+        gap: 14px;
+    }
+
+    .bignum__item:nth-child(2) { margin-left: 12px; }
+    .bignum__item:nth-child(3) { margin-left: 24px; }
+
+    .bignum__num { font-size: 60px; }
+
+    .timeline__item { grid-template-columns: 1fr; }
+
+    .timeline__date { padding: 0 0 8px; }
+
+    .timeline__title {
+        padding-left: 24px;
+        border-left: 1px solid var(--line-strong);
+    }
+
+    .company-list__row {
+        grid-template-columns: 1fr;
+        gap: 0;
+        padding: 18px 0;
+    }
+
+    .company-list dt { line-height: 1.8; }
+
+    .frame { padding: 5px; }
+
+    .card__num,
+    .card__label,
+    .card__title { padding-left: 22px; padding-right: 22px; }
+
+    .card__body { padding: 20px 22px 26px; }
+
+    .work-feature { padding: 26px 22px; }
+
+    .story__item { grid-template-columns: 40px minmax(0, 1fr); }
+
+    .news-item {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        padding: 26px 0;
+    }
+
+    .news-item:hover { transform: none; }
+
+    .news-item__date { padding-top: 0; }
+
+    .news-more,
+    .works-more { justify-content: flex-start; }
+
+    .subnav { gap: 24px; }
+
+    .footer__inner {
+        grid-template-columns: 1fr;
+        padding: 56px var(--gutter) 48px;
+        gap: 36px;
+    }
+
+    .footer__sitemap-list {
+        grid-template-rows: repeat(5, auto);
+        gap: 10px 32px;
+    }
+
+    .footer__bottom { padding: 18px var(--gutter); }
+
+    .cs-address__line { font-size: 13px; }
+
+    .contact-split__left { padding: 108px 24px 32px; }
+
+    .contact-split__right { padding: 40px 24px 56px; }
+
+    .contact-form__row { padding: 14px 16px; }
+
+    .contact-form__footer { padding: 14px 16px; }
+}

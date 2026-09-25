@@ -1,0 +1,99 @@
+/* =====================================================
+   company-brain.html 専用 (style.css の後に読み込む)
+   共通部品はそのまま使い、このページだけの調整を足す。
+===================================================== */
+
+/* 見出し h2 は clamp(2.4rem, 4.6vw, 3.6rem) を下回らせない。
+   左カラム (block__grid) の見出しは幅が狭いので上限だけ抑える。 */
+.block__title { font-size: clamp(2.4rem, 3vw, 2.9rem); }
+.block__intro .block__title { font-size: clamp(2.4rem, 4.6vw, 3.6rem); }
+
+/* リード + 製品画面。直後の黒ブロック (unification) との間が空きすぎないよう下を詰める */
+.cb-intro { padding-bottom: clamp(56px, 6vw, 88px); }
+.cb-intro .frame { margin-top: clamp(40px, 5vw, 64px); }
+
+/* 場面 (A ブロックの4つのまとまり) */
+.scene + .scene { margin-top: clamp(64px, 8vw, 104px); }
+.scene > * + * { margin-top: 28px; }
+.scene > .quote-list,
+.scene > .bignum { margin-top: 36px; }
+.scene > .text { margin-top: 36px; }
+
+/* 引用ではない状況の羅列なので、引用符を出さない罫線行にする */
+.quote-list--plain .quote-list__item { display: block; }
+.quote-list--plain .quote-list__item::before { content: none; }
+
+/* 折り返しで1〜2文字だけ残らないようにする */
+.quote-list--plain .quote-list__item,
+.block__subtitle,
+.bignum__title,
+.feature__title,
+.pullquote { text-wrap: balance; }
+
+/* リードと unification の間に細い罫線 (黒が続くので区切る) */
+#unification { border-top: 1px solid var(--line); }
+
+/* ブロック見出しの上の小さな mono ラベル (はじめ方) */
+.block__kicker {
+    margin-bottom: 20px;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 300;
+    letter-spacing: 0.24em;
+    line-height: 1.6;
+    color: var(--fg-dim);
+}
+
+/* はじめ方: steps の下の一文 */
+.cb-steps-note { margin-top: clamp(32px, 4vw, 48px); }
+
+/* できること: 最後の行に下罫線を足して閉じる */
+.feature:last-child { border-bottom: 1px solid var(--line); }
+
+/* 権限の一文 (画像の代わり)。左右反転で画像側に入るので、罫線の中央に置く */
+.feature__media .pullquote { max-width: 18em; }
+
+@media (max-width: 960px) {
+    .block__title { font-size: clamp(2.4rem, 4.6vw, 3.6rem); }
+    .feature__media .pullquote { max-width: none; }
+
+    /* 連番は 3.6rem を下回らせない。本文なしの step は番号の中央にタイトルを合わせる */
+    .step__num { font-size: clamp(3.6rem, 9vw, 4.4rem); }
+    .cb-steps .step__title { grid-row: 1 / span 2; align-self: center; }
+}
+
+/* company brain (13文字) を 375px でも 3rem 前後で1行に収める。
+   幅 = 約6.25em。左右 24px を引いた残りに収まる大きさ */
+@media (max-width: 600px) {
+    .page-hero__title--long { font-size: max(40px, calc(15vw - 8px)); }
+}
+
+
+/* ---- 場面A: 「問い」と「答え(散らばっている場所)」の階層を分ける ----
+   問い = 大きな明朝。答え = 小さめのゴシック + mono の番号。ずらしは使わない。 */
+.scene__question {
+    font-size: clamp(2rem, 3.6vw, 3rem);
+    line-height: 1.5;
+}
+.scene__kicker { margin-top: 44px; margin-bottom: 0; }
+.scene > .scene__list { margin-top: 18px; counter-reset: sl; }
+.quote-list.scene__list .quote-list__item {
+    display: grid;
+    grid-template-columns: clamp(40px, 5vw, 64px) minmax(0, 1fr);
+    padding: clamp(16px, 2vw, 22px) 0;
+    font-family: var(--font-jp-sans);
+    font-weight: 400;
+    font-size: clamp(1.05rem, 1.5vw, 1.3rem);
+    line-height: 1.7;
+    letter-spacing: 0.02em;
+    color: var(--fg-mute);
+}
+.quote-list.scene__list .quote-list__item::before {
+    counter-increment: sl;
+    content: counter(sl, decimal-leading-zero);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.14em;
+    line-height: 2.2;
+    opacity: 0.6;
+}
